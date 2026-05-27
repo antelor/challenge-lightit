@@ -1,32 +1,77 @@
+import { motion, AnimatePresence } from "framer-motion";
 import type { Patient } from "../../types/patient";
 import Avatar from "./Avatar";
 
 type Props = {
 	patient: Patient;
-	onView: (patient: Patient) => void;
-	onEdit?: (patient: Patient) => void;
-	onDelete?: (id: string) => void;
+	isOpen: boolean;
+	onToggle: () => void;
+	onEdit: (patient: Patient) => void;
+	onDelete: (id: string) => void;
 };
 
-function PatientCard({ patient, onView, onEdit, onDelete }: Props) {
+function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 	return (
-		<div style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
-			<Avatar name={patient.name} src={patient.avatar} size={50} />
-			<h3>{patient.name}</h3>
+		<div style={card}>
+			<div style={header}>
+				<div>
+					<strong>{patient.name}</strong>
+				</div>
 
-			<p>Created: {new Date(patient.createdAt).toLocaleDateString()}</p>
+				<div style={{ display: "flex", gap: 8 }}>
+					<button onClick={onToggle}>{isOpen ? "Hide" : "View"}</button>
 
-			<div style={{ display: "flex", gap: 8 }}>
-				<button onClick={() => onView(patient)}>View Details</button>
+					<button onClick={() => onEdit(patient)}>Edit</button>
 
-				{onEdit && <button onClick={() => onEdit(patient)}>Edit</button>}
-
-				{onDelete && (
 					<button onClick={() => onDelete(patient.id)}>Delete</button>
-				)}
+				</div>
 			</div>
+
+			<AnimatePresence>
+				{isOpen && (
+					<motion.div
+						initial={{ height: 0, opacity: 0 }}
+						animate={{ height: "auto", opacity: 1 }}
+						exit={{ height: 0, opacity: 0 }}
+						transition={{ duration: 0.2 }}
+						style={{ overflow: "hidden" }}
+					>
+						<div style={content}>
+							<Avatar src={patient.avatar} name={patient.name} size={50} />
+
+							<p>{patient.description}</p>
+
+							<a href={patient.website} target="_blank">
+								Visit
+							</a>
+
+							<p>Created: {new Date(patient.createdAt).toLocaleString()}</p>
+						</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }
+
+const card: React.CSSProperties = {
+	border: "1px solid #ddd",
+	padding: 12,
+	borderRadius: 8,
+	marginBottom: 10,
+};
+
+const header: React.CSSProperties = {
+	display: "flex",
+	justifyContent: "space-between",
+	alignItems: "center",
+};
+
+const content: React.CSSProperties = {
+	paddingTop: 10,
+	display: "flex",
+	flexDirection: "column",
+	gap: 8,
+};
 
 export default PatientCard;

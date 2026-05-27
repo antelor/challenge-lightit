@@ -18,6 +18,12 @@ function Dashboard() {
 
 	const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
 
+	const [expandedId, setExpandedId] = useState<string | null>(null);
+
+	function toggle(id: string) {
+		setExpandedId((prev) => (prev === id ? null : id));
+	}
+
 	useEffect(() => {
 		async function loadPatients() {
 			try {
@@ -44,7 +50,7 @@ function Dashboard() {
 
 	function handleAddPatient(data: PatientFormData) {
 		const cleanData = normalizePatientFormData(data);
-    
+
 		const newPatient: Patient = {
 			id: crypto.randomUUID(),
 			createdAt: new Date().toISOString(),
@@ -90,9 +96,9 @@ function Dashboard() {
 			<section>
 				{patients.map((patient) => (
 					<PatientCard
-						key={patient.id}
 						patient={patient}
-						onView={setSelectedPatient}
+						isOpen={expandedId === patient.id}
+						onToggle={() => toggle(patient.id)}
 						onEdit={openEdit}
 						onDelete={handleDelete}
 					/>
