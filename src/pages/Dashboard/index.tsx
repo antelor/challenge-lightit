@@ -1,35 +1,68 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+
 import { useGetPatients } from "../../hooks/useGetPatients";
-import type { Patient } from "../../types/types";
+import { usePatientForm } from "../../hooks/usePatientForm";
+
+import type { Patient } from "../../types/patient";
 import PatientCard from "../../components/PatientCard";
+
+import AddPatientModal from "../../components/AddPatientModal";
+import EditPatientModal from "../../components/EditPatientModal";
 
 function Dashboard() {
 	const queryClient = useQueryClient();
 
+	const {
+		data: patients = [],
+		isLoading,
+		isError,
+		error,
+	} = useGetPatients();
+
 	const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-	const { data: patients = [], isLoading, isError, error } = useGetPatients();
+	const { formData, setFormData, resetForm, fillForm } = usePatientForm();
 
-	function handleAddPatient(newPatient: Patient) {
+	function handleAddPatient() {
+		const newPatient: Patient = {
+			id: crypto.randomUUID(),
+			createdAt: new Date().toISOString(),
+			...formData,
+		};
+
+console.log("ADDING:", formData);
 		queryClient.setQueryData(["patients"], (old: Patient[] = []) => [
 			...old,
 			newPatient,
 		]);
+
+		resetForm();
+		setIsAddModalOpen(false);
 	}
 
-	function handleDelete(id: string) {
-		queryClient.setQueryData(["patients"], (old: Patient[] = []) =>
-			old.filter((p) => p.id !== id),
-		);
-	}
+	function handleEditPatient() {
+		if (!selectedPatient) return;
 
-	function handleEdit(patient: Patient) {
 		queryClient.setQueryData(["patients"], (old: Patient[] = []) =>
 			old.map((p) =>
-				p.id === patient.id ? { ...p, name: p.name + " (edited)" } : p,
-			),
+				p.id === selectedPatient.id
+					? { ...p, ...formData }
+					: p
+			)
 		);
+
+		resetForm();
+		setSelectedPatient(null);
+		setIsEditModalOpen(false);
+	}
+
+	function openEdit(patient: Patient) {
+		fillForm(patient);
+		setSelectedPatient(patient);
+		setIsEditModalOpen(true);
 	}
 
 	return (
@@ -39,15 +72,8 @@ function Dashboard() {
 
 				<button
 					onClick={() => {
-						// example dummy add
-						handleAddPatient({
-							id: crypto.randomUUID(),
-							name: "New Patient",
-							avatar: "",
-							createdAt: new Date().toISOString(),
-							description: "Added locally",
-							website: "https://example.com",
-						});
+						resetForm();
+						setIsAddModalOpen(true);
 					}}
 				>
 					Add Patient
@@ -65,11 +91,39 @@ function Dashboard() {
 							key={patient.id}
 							patient={patient}
 							onView={setSelectedPatient}
-							onEdit={handleEdit}
-							onDelete={handleDelete}
+							onEdit={openEdit}
+							onDelete={(id) =>
+								queryClient.setQueryData(
+									["patients"],
+									(old: Patient[] = []) =>
+										old.filter((p) => p.id !== id)
+								)
+							}
 						/>
 					))}
 				</section>
+			)}
+
+			{isAddModalOpen && (
+				<AddPatientModal
+					formData={formData}
+					setFormData={setFormData}
+					onSave={handleAddPatient}
+					onClose={() => setIsAddModalOpen(false)}
+				/>
+			)}
+
+			{isEditModalOpen && (
+				<EditPatientModal
+					formData={formData}
+					setFormData={setFormData}
+					onUpdate={handleEditPatient}
+					onClose={() => {
+						setIsEditModalOpen(false);
+						setSelectedPatient(null);
+						resetForm();
+					}}
+				/>
 			)}
 
 			{selectedPatient && (
@@ -85,13 +139,22 @@ function Dashboard() {
 
 					<p>{selectedPatient.description}</p>
 
-					<a href={selectedPatient.website} target="_blank" rel="noreferrer">
+					<a
+						href={selectedPatient.website}
+						target="_blank"
+						rel="noreferrer"
+					>
 						Visit Website
 					</a>
 
-					<p>Created: {new Date(selectedPatient.createdAt).toLocaleString()}</p>
+					<p>
+						Created:{" "}
+						{new Date(selectedPatient.createdAt).toLocaleString()}
+					</p>
 
-					<button onClick={() => setSelectedPatient(null)}>Close</button>
+					<button onClick={() => setSelectedPatient(null)}>
+						Close
+					</button>
 				</dialog>
 			)}
 		</main>

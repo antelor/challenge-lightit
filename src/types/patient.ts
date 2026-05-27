@@ -6,3 +6,10 @@ export type Patient = {
 	description: string;
 	website: string;
 };
+
+export type PatientFormData = {
+	name: string;
+	avatar: string;
+	description: string;
+	website: string;
+};

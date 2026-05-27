@@ -1,4 +1,4 @@
-import type { Patient } from "../../types/types";
+import type { Patient } from "../../types/patient";
 import Avatar from "./Avatar";
 
 type Props = {
@@ -10,9 +10,7 @@ type Props = {
 
 function PatientCard({ patient, onView, onEdit, onDelete }: Props) {
 	return (
-		<div
-			style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}
-		>
+		<div style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
 			<Avatar name={patient.name} src={patient.avatar} size={50} />
 			<h3>{patient.name}</h3>
 
