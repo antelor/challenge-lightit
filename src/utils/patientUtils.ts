@@ -1,6 +1,6 @@
 export function normalizeWebsite(url?: string) {
 	if (typeof url !== "string" || url.trim().length === 0) {
-		return "#";
+		return "";
 	}
 
 	if (
