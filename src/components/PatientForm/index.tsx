@@ -12,7 +12,12 @@ function PatientForm({ register, errors }: Props) {
 			<div>
 				<input
 					placeholder="Name"
-					{...register("name", { required: "Name is required" })}
+					{...register("name", {
+						required: "Name is required",
+						validate: {
+							maxLength: (value) => value.trim().length >= 30 || "Name is too long",
+						},
+					})}
 				/>
 				{errors.name && <small>{errors.name.message}</small>}
 			</div>
@@ -22,9 +27,11 @@ function PatientForm({ register, errors }: Props) {
 					placeholder="Avatar"
 					{...register("avatar", {
 						required: "Avatar is required",
-						pattern: {
-							value: /^https?:\/\/.+/,
-							message: "Invalid URL",
+						validate: {
+							minLength: (value) => value.trim().length >= 3 || "URL is too short",
+
+							hasDot: (value) =>
+								value.includes(".") || "URL must contain a dot (e.g. google.com)",
 						},
 					})}
 				/>
@@ -46,9 +53,11 @@ function PatientForm({ register, errors }: Props) {
 					placeholder="Website"
 					{...register("website", {
 						required: "Website is required",
-						pattern: {
-							value: /^https?:\/\/.+/,
-							message: "Invalid URL",
+						validate: {
+							minLength: (value) => value.trim().length >= 3 || "URL is too short",
+
+							hasDot: (value) =>
+								value.includes(".") || "URL must contain a dot (e.g. google.com)",
 						},
 					})}
 				/>

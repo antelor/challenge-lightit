@@ -4,6 +4,7 @@ import type { Patient, PatientFormData } from "../../types/patient";
 import PatientCard from "../../components/PatientCard";
 import AddPatientModal from "../../components/AddPatientModal";
 import EditPatientModal from "../../components/EditPatientModal";
+import { normalizePatientFormData } from "../../utils/formUtils";
 
 function Dashboard() {
 	const [patients, setPatients] = useState<Patient[]>([]);
@@ -32,9 +33,7 @@ function Dashboard() {
 				const data: Patient[] = await res.json();
 				setPatients(data);
 			} catch (err) {
-				setError(
-					err instanceof Error ? err.message : "Something went wrong"
-				);
+				setError(err instanceof Error ? err.message : "Something went wrong");
 			} finally {
 				setLoading(false);
 			}
@@ -44,10 +43,12 @@ function Dashboard() {
 	}, []);
 
 	function handleAddPatient(data: PatientFormData) {
+		const cleanData = normalizePatientFormData(data);
+    
 		const newPatient: Patient = {
 			id: crypto.randomUUID(),
 			createdAt: new Date().toISOString(),
-			...data,
+			...cleanData,
 		};
 
 		setPatients((prev) => [...prev, newPatient]);
@@ -58,9 +59,7 @@ function Dashboard() {
 		if (!editingPatient) return;
 
 		setPatients((prev) =>
-			prev.map((p) =>
-				p.id === editingPatient.id ? { ...p, ...data } : p
-			)
+			prev.map((p) => (p.id === editingPatient.id ? { ...p, ...data } : p)),
 		);
 
 		setEditingPatient(null);
@@ -85,9 +84,7 @@ function Dashboard() {
 			<header>
 				<h1>Patient Dashboard</h1>
 
-				<button onClick={() => setIsAddModalOpen(true)}>
-					Add Patient
-				</button>
+				<button onClick={() => setIsAddModalOpen(true)}>Add Patient</button>
 			</header>
 
 			<section>
@@ -133,22 +130,13 @@ function Dashboard() {
 
 					<p>{selectedPatient.description}</p>
 
-					<a
-						href={selectedPatient.website}
-						target="_blank"
-						rel="noreferrer"
-					>
+					<a href={selectedPatient.website} target="_blank" rel="noreferrer">
 						Visit Website
 					</a>
 
-					<p>
-						Created:{" "}
-						{new Date(selectedPatient.createdAt).toLocaleString()}
-					</p>
+					<p>Created: {new Date(selectedPatient.createdAt).toLocaleString()}</p>
 
-					<button onClick={() => setSelectedPatient(null)}>
-						Close
-					</button>
+					<button onClick={() => setSelectedPatient(null)}>Close</button>
 				</dialog>
 			)}
 		</main>
