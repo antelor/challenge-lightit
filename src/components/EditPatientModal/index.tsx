@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { Patient, PatientFormData } from "../../types/patient";
 import PatientForm from "../PatientForm";
+import { toast } from "react-hot-toast";
 
 type Props = {
 	patient: Patient;
@@ -26,12 +27,22 @@ function EditPatientModal({ patient, onUpdate, onClose }: Props) {
 		});
 	}, [patient, reset]);
 
+    function onSubmit(data: PatientFormData) {
+		onUpdate(data);
+		toast.success("Patient edited successfully");
+	}
+
+	function onError() {
+		toast.error("Error editing patient");
+	}
+
+
 	return (
 		<div style={overlay}>
 			<div style={modal}>
 				<h2>Edit Patient</h2>
 
-				<form onSubmit={handleSubmit(onUpdate)}>
+				<form onSubmit={handleSubmit(onSubmit, onError)}>
 					<PatientForm register={register} errors={errors} />
 
 					<button type="submit">Update</button>
