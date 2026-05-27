@@ -49,7 +49,19 @@ function Dashboard() {
 				if (!res.ok) throw new Error("Failed to fetch patients");
 
 				const data: Patient[] = await res.json();
-				setPatients(data);
+
+				const normalized = data.map((p) => ({
+					...p,
+					website:
+						typeof p.website === "string" && p.website.trim().length > 0
+							? p.website.startsWith("http://") ||
+								p.website.startsWith("https://")
+								? p.website
+								: `https://${p.website}`
+							: "#",
+				}));
+
+				setPatients(normalized);
 			} catch (err) {
 				setError(err instanceof Error ? err.message : "Something went wrong");
 			} finally {
@@ -132,7 +144,7 @@ function Dashboard() {
 						<PatientCardSkeleton key={i} />
 					))
 				) : sortedPatients.length === 0 ? (
-          <EmptyState setIsAddModalOpen={setIsAddModalOpen} />
+					<EmptyState setIsAddModalOpen={setIsAddModalOpen} />
 				) : (
 					<AnimatePresence mode="wait">
 						<motion.div
