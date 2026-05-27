@@ -14,17 +14,18 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 	return (
 		<div style={card}>
 			<div style={header}>
-				<div>
-					<strong>{patient.name}</strong>
+				<div style={left}>
+					<Avatar src={patient.avatar} name={patient.name} size={40} />
+
+					<div>
+						<div style={name}>{patient.name}</div>
+						<div style={sub}>Patient</div>
+					</div>
 				</div>
 
-				<div style={{ display: "flex", gap: 8 }}>
-					<button onClick={onToggle}>{isOpen ? "Hide" : "View"}</button>
-
-					<button onClick={() => onEdit(patient)}>Edit</button>
-
-					<button onClick={() => onDelete(patient.id)}>Delete</button>
-				</div>
+				<button onClick={onToggle}>
+					{isOpen ? "Collapse" : "Expand"}
+				</button>
 			</div>
 
 			<AnimatePresence>
@@ -37,17 +38,26 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 						style={{ overflow: "hidden" }}
 					>
 						<div style={content}>
-							<div style={description}>
-								<Avatar src={patient.avatar} name={patient.name} size={50} />
-								<div>{patient.description}</div>
-							</div>
+							<p style={description}>{patient.description}</p>
 
 							<div style={footer}>
 								<a href={patient.website} target="_blank">
 									Visit website
 								</a>
 
-								<div>Created: {new Date(patient.createdAt).toLocaleString()}</div>
+								<div style={actions}>
+									<button onClick={() => onEdit(patient)}>
+										Edit
+									</button>
+									<button onClick={() => onDelete(patient.id)}>
+										Delete
+									</button>
+								</div>
+							</div>
+
+							<div style={meta}>
+								Created{" "}
+								{new Date(patient.createdAt).toLocaleString()}
 							</div>
 						</div>
 					</motion.div>
@@ -57,25 +67,13 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 	);
 }
 
+/* ---------------- styles ---------------- */
+
 const card: React.CSSProperties = {
-	border: "1px solid #ddd",
+	border: "1px solid #e5e7eb",
+	borderRadius: 12,
 	padding: 12,
-	borderRadius: 8,
 	marginBottom: 10,
-};
-
-const description: React.CSSProperties = {
-	display: "flex",
-	flexDirection: "row",
-	alignItems: "flex-start",
-	justifyContent: "space-between",
-	gap: 12,
-};
-
-const footer: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
 };
 
 const header: React.CSSProperties = {
@@ -84,11 +82,48 @@ const header: React.CSSProperties = {
 	alignItems: "center",
 };
 
+const left: React.CSSProperties = {
+	display: "flex",
+	gap: 10,
+	alignItems: "center",
+};
+
+const name: React.CSSProperties = {
+	fontWeight: 600,
+};
+
+const sub: React.CSSProperties = {
+	fontSize: 12,
+	color: "#6b7280",
+};
+
 const content: React.CSSProperties = {
-	paddingTop: 10,
+	marginTop: 10,
 	display: "flex",
 	flexDirection: "column",
-	gap: 8,
+	gap: 10,
+};
+
+const description: React.CSSProperties = {
+	margin: 0,
+	maxWidth: "65ch",
+};
+
+const footer: React.CSSProperties = {
+	display: "flex",
+	justifyContent: "space-between",
+	alignItems: "center",
+};
+
+const actions: React.CSSProperties = {
+	display: "flex",
+	gap: 6,
+};
+
+const meta: React.CSSProperties = {
+	fontSize: 12,
+	color: "#9ca3af",
+	marginTop: 6,
 };
 
 export default PatientCard;
