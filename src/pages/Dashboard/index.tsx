@@ -1,115 +1,101 @@
-import { useEffect, useState } from 'react';
-
-type Patient = {
-  id: string;
-  createdAt: string;
-  name: string;
-  avatar: string;
-  description: string;
-  website: string;
-};
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useGetPatients } from "../../hooks/useGetPatients";
+import type { Patient } from "../../types/types";
+import PatientCard from "../../components/PatientCard";
 
 function Dashboard() {
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [selectedPatient, setSelectedPatient] =
-    useState<Patient | null>(null);
+	const queryClient = useQueryClient();
 
-  useEffect(() => {
-    async function fetchPatients() {
-      try {
-        const res = await fetch(import.meta.env.VITE_API_URL);
+	const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
-        if (!res.ok) throw new Error('Failed to fetch');
+	const { data: patients = [], isLoading, isError, error } = useGetPatients();
 
-        const data = await res.json();
+	function handleAddPatient(newPatient: Patient) {
+		queryClient.setQueryData(["patients"], (old: Patient[] = []) => [
+			...old,
+			newPatient,
+		]);
+	}
 
-        setPatients(data);
-      } catch (err) {
-        setError('Error loading patients: ' + err);
-      } finally {
-        setLoading(false);
-      }
-    }
+	function handleDelete(id: string) {
+		queryClient.setQueryData(["patients"], (old: Patient[] = []) =>
+			old.filter((p) => p.id !== id),
+		);
+	}
 
-    fetchPatients();
-  }, []);
+	function handleEdit(patient: Patient) {
+		queryClient.setQueryData(["patients"], (old: Patient[] = []) =>
+			old.map((p) =>
+				p.id === patient.id ? { ...p, name: p.name + " (edited)" } : p,
+			),
+		);
+	}
 
-  return (
-    <main>
-      <header>
-        <h1>Patient Dashboard</h1>
-        <button>Add Patient</button>
-      </header>
+	return (
+		<main>
+			<header>
+				<h1>Patient Dashboard</h1>
 
-      {loading && <p>Loading...</p>}
+				<button
+					onClick={() => {
+						// example dummy add
+						handleAddPatient({
+							id: crypto.randomUUID(),
+							name: "New Patient",
+							avatar: "",
+							createdAt: new Date().toISOString(),
+							description: "Added locally",
+							website: "https://example.com",
+						});
+					}}
+				>
+					Add Patient
+				</button>
+			</header>
 
-      {error && <p>{error}</p>}
+			{isLoading && <p>Loading...</p>}
 
-      {!loading && !error && (
-        <section>
-          {patients.map((patient) => (
-            <article key={patient.id}>
-              <img
-                src={patient.avatar}
-                alt={patient.name}
-                width={50}
-                height={50}
-              />
+			{isError && <p>{(error as Error).message}</p>}
 
-              <h3>{patient.name}</h3>
+			{!isLoading && !isError && (
+				<section>
+					{patients.map((patient: Patient) => (
+						<PatientCard
+							key={patient.id}
+							patient={patient}
+							onView={setSelectedPatient}
+							onEdit={handleEdit}
+							onDelete={handleDelete}
+						/>
+					))}
+				</section>
+			)}
 
-              <p>
-                Created:{' '}
-                {new Date(patient.createdAt).toLocaleDateString()}
-              </p>
+			{selectedPatient && (
+				<dialog open>
+					<h2>{selectedPatient.name}</h2>
 
-              <button
-                onClick={() => setSelectedPatient(patient)}
-              >
-                View Details
-              </button>
-            </article>
-          ))}
-        </section>
-      )}
+					<img
+						src={selectedPatient.avatar}
+						alt={selectedPatient.name}
+						width={80}
+						height={80}
+					/>
 
-      {selectedPatient && (
-        <dialog open>
-          <h2>{selectedPatient.name}</h2>
+					<p>{selectedPatient.description}</p>
 
-          <img
-            src={selectedPatient.avatar}
-            alt={selectedPatient.name}
-            width={80}
-            height={80}
-          />
+					<a href={selectedPatient.website} target="_blank" rel="noreferrer">
+						Visit Website
+					</a>
 
-          <p>{selectedPatient.description}</p>
+					<p>Created: {new Date(selectedPatient.createdAt).toLocaleString()}</p>
 
-          <a
-            href={selectedPatient.website}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Visit Website
-          </a>
-
-          <p>
-            Created:{' '}
-            {new Date(
-              selectedPatient.createdAt
-            ).toLocaleString()}
-          </p>
-
-          <button onClick={() => setSelectedPatient(null)}>
-            Close
-          </button>
-        </dialog>
-      )}
-    </main>
-  );
+					<button onClick={() => setSelectedPatient(null)}>Close</button>
+				</dialog>
+			)}
+		</main>
+	);
 }
 
 export default Dashboard;
