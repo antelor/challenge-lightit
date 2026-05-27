@@ -11,6 +11,8 @@ import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import { normalizePatientFormData } from "./utils";
 import EmptyState from "../../components/EmptyState";
+import ConfirmModal from "../../components/ConfirmModal";
+import toast from "react-hot-toast";
 
 function Dashboard() {
 	const [patients, setPatients] = useState<Patient[]>([]);
@@ -24,6 +26,8 @@ function Dashboard() {
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 
 	const [searchParams, setSearchParams] = useSearchParams();
+
+	const [deleteTarget, setDeleteTarget] = useState<Patient | null>(null);
 
 	const rawPage = searchParams.get("page");
 
@@ -123,8 +127,16 @@ function Dashboard() {
 		setIsEditModalOpen(false);
 	}
 
-	function handleDelete(id: string) {
-		setPatients((prev) => prev.filter((p) => p.id !== id));
+	function requestDelete(patient: Patient) {
+		setDeleteTarget(patient);
+	}
+
+	function handleDelete() {
+		if (!deleteTarget) return;
+
+		setPatients((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+		setDeleteTarget(null);
+		toast.success("Patient deleted successfully");
 	}
 
 	function openEdit(patient: Patient) {
@@ -164,7 +176,7 @@ function Dashboard() {
 									isOpen={expandedId === patient.id}
 									onToggle={() => toggle(patient.id)}
 									onEdit={openEdit}
-									onDelete={handleDelete}
+									onDelete={() => requestDelete(patient)}
 								/>
 							))}
 						</motion.div>
@@ -195,6 +207,15 @@ function Dashboard() {
 					}}
 				/>
 			)}
+
+			<ConfirmModal
+				open={!!deleteTarget}
+				title="Delete patient?"
+				message="This will permanently remove the patient."
+				onCancel={() => setDeleteTarget(null)}
+				onConfirm={handleDelete}
+				confirmBtnText="Delete"
+			/>
 		</div>
 	);
 }
