@@ -6,6 +6,7 @@ import PatientCardSkeleton from "../../components/PatientCardSkeleton";
 import AddPatientModal from "../../components/AddPatientModal";
 import EditPatientModal from "../../components/EditPatientModal";
 import { normalizePatientFormData } from "../../utils/formUtils";
+import Header from "../../components/Header";
 
 function Dashboard() {
 	const [patients, setPatients] = useState<Patient[]>([]);
@@ -82,10 +83,7 @@ function Dashboard() {
 
 	return (
 		<div>
-			<header>
-				<h1>Patient Dashboard</h1>
-				<button onClick={() => setIsAddModalOpen(true)}>Add Patient</button>
-			</header>
+      <Header onAdd={() => setIsAddModalOpen(true)} />
 
 			<section>
 				{loading

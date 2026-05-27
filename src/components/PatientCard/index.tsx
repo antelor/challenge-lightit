@@ -44,7 +44,7 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 
 							<div style={footer}>
 								<a href={patient.website} target="_blank">
-									Visit
+									Visit website
 								</a>
 
 								<div>Created: {new Date(patient.createdAt).toLocaleString()}</div>
