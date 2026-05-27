@@ -19,6 +19,10 @@ export function usePatients() {
 				setLoading(true);
 				setError(null);
 
+				if (!import.meta.env.VITE_API_URL) {
+					throw new Error("Missing API URL");
+				}
+
 				const res = await fetch(import.meta.env.VITE_API_URL);
 
 				if (!res.ok) {
@@ -27,9 +31,11 @@ export function usePatients() {
 
 				const data: Patient[] = await res.json();
 
-				const normalized: Patient[] = data.map((p) => ({
+				const safeData = Array.isArray(data) ? data : [];
+
+				const normalized: Patient[] = safeData.map((p) => ({
 					...p,
-					website: normalizeWebsite(p.website),
+					website: normalizeWebsite(p?.website ?? ""),
 				}));
 				
 				
@@ -49,11 +55,12 @@ export function usePatients() {
 	}, []);
 
 	const sortedPatients = useMemo(() => {
-		return [...patients].sort(
-			(a, b) =>
-				new Date(b.createdAt).getTime() -
-				new Date(a.createdAt).getTime(),
-		);
+		return [...patients].sort((a, b) => {
+			const aTime = Date.parse(a.createdAt ?? "") || 0;
+			const bTime = Date.parse(b.createdAt ?? "") || 0;
+
+			return bTime - aTime;
+		});
 	}, [patients]);
 
 	function addPatient(data: PatientFormData) {
