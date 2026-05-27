@@ -1,18 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useSearchParams } from "react-router-dom";
-
-import type { Patient, PatientFormData } from "../../types/patient";
-import PatientCard from "../../components/PatientCard";
-import PatientCardSkeleton from "../../components/PatientCardSkeleton";
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import AddPatientModal from "../../components/AddPatientModal";
+import ConfirmModal from "../../components/ConfirmModal";
 import EditPatientModal from "../../components/EditPatientModal";
+import EmptyState from "../../components/EmptyState";
 import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
-import { normalizePatientFormData } from "./utils";
-import EmptyState from "../../components/EmptyState";
-import ConfirmModal from "../../components/ConfirmModal";
-import toast from "react-hot-toast";
+import PatientCard from "../../components/PatientCard";
+import PatientCardSkeleton from "../../components/PatientCardSkeleton";
+import { usePagination } from "../../hooks/usePagination";
+import type { Patient, PatientFormData } from "../../types/patient";
+import { normalizePatientFormData } from "../../utils/formUtils";
+
+const PAGE_SIZE = 10;
 
 function Dashboard() {
 	const [patients, setPatients] = useState<Patient[]>([]);
@@ -25,18 +26,7 @@ function Dashboard() {
 	const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 
-	const [searchParams, setSearchParams] = useSearchParams();
-
 	const [deleteTarget, setDeleteTarget] = useState<Patient | null>(null);
-
-	const rawPage = searchParams.get("page");
-
-	const parsedPage = Number(rawPage);
-
-	const page =
-		Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
-
-	const pageSize = 10;
 
 	function toggle(id: string) {
 		setExpandedId((prev) => (prev === id ? null : id));
@@ -83,22 +73,16 @@ function Dashboard() {
 		);
 	}, [patients]);
 
-	const totalPages = Math.ceil(sortedPatients.length / pageSize);
-
-	const paginatedPatients = sortedPatients.slice(
-		(page - 1) * pageSize,
-		page * pageSize,
-	);
-
-	useEffect(() => {
-		if (page > totalPages && totalPages > 0) {
-			setSearchParams({ page: "1" });
-		}
-	}, [page, totalPages, setSearchParams]);
-
-	function updatePage(page: number) {
-		setSearchParams({ page: String(page) });
-	}
+	const {
+		page,
+		totalPages,
+		paginated: paginatedPatients,
+		updatePage,
+		resetPage,
+	} = usePagination({
+		items: sortedPatients,
+		pageSize: PAGE_SIZE,
+	});
 
 	function handleAddPatient(data: PatientFormData) {
 		const cleanData = normalizePatientFormData(data);
@@ -110,9 +94,7 @@ function Dashboard() {
 		};
 
 		setPatients((prev) => [...prev, newPatient]);
-
-		setSearchParams({ page: "1" });
-
+		resetPage();
 		setIsAddModalOpen(false);
 	}
 
@@ -153,7 +135,7 @@ function Dashboard() {
 			<section>
 				{loading ? (
 					<div style={grid}>
-						{Array.from({ length: 10 }).map((_, i) => (
+						{Array.from({ length: PAGE_SIZE }).map((_, i) => (
 							<PatientCardSkeleton key={i} />
 						))}
 					</div>

@@ -1,4 +1,4 @@
-import type { PatientFormData } from "../../types/patient";
+import type { PatientFormData } from "../types/patient";
 
 function normalizeUrl(url: string): string {
   const trimmed = url.trim();
