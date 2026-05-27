@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import type { Patient, PatientFormData } from "../../types/patient";
 import PatientCard from "../../components/PatientCard";
+import PatientCardSkeleton from "../../components/PatientCardSkeleton";
 import AddPatientModal from "../../components/AddPatientModal";
 import EditPatientModal from "../../components/EditPatientModal";
 import { normalizePatientFormData } from "../../utils/formUtils";
@@ -10,8 +11,6 @@ function Dashboard() {
 	const [patients, setPatients] = useState<Patient[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-
-	const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -32,9 +31,7 @@ function Dashboard() {
 
 				const res = await fetch(import.meta.env.VITE_API_URL);
 
-				if (!res.ok) {
-					throw new Error("Failed to fetch patients");
-				}
+				if (!res.ok) throw new Error("Failed to fetch patients");
 
 				const data: Patient[] = await res.json();
 				setPatients(data);
@@ -81,28 +78,30 @@ function Dashboard() {
 		setIsEditModalOpen(true);
 	}
 
-	if (loading) return <p>Loading patients...</p>;
-
 	if (error) return <p style={{ color: "red" }}>{error}</p>;
 
 	return (
-		<main>
+		<div>
 			<header>
 				<h1>Patient Dashboard</h1>
-
 				<button onClick={() => setIsAddModalOpen(true)}>Add Patient</button>
 			</header>
 
 			<section>
-				{patients.map((patient) => (
-					<PatientCard
-						patient={patient}
-						isOpen={expandedId === patient.id}
-						onToggle={() => toggle(patient.id)}
-						onEdit={openEdit}
-						onDelete={handleDelete}
-					/>
-				))}
+				{loading
+					? Array.from({ length: 5 }).map((_, i) => (
+							<PatientCardSkeleton key={i} />
+						))
+					: patients.map((patient) => (
+							<PatientCard
+								key={patient.id}
+								patient={patient}
+								isOpen={expandedId === patient.id}
+								onToggle={() => toggle(patient.id)}
+								onEdit={openEdit}
+								onDelete={handleDelete}
+							/>
+						))}
 			</section>
 
 			{isAddModalOpen && (
@@ -122,30 +121,7 @@ function Dashboard() {
 					}}
 				/>
 			)}
-
-			{selectedPatient && (
-				<dialog open>
-					<h2>{selectedPatient.name}</h2>
-
-					<img
-						src={selectedPatient.avatar}
-						alt={selectedPatient.name}
-						width={80}
-						height={80}
-					/>
-
-					<p>{selectedPatient.description}</p>
-
-					<a href={selectedPatient.website} target="_blank" rel="noreferrer">
-						Visit Website
-					</a>
-
-					<p>Created: {new Date(selectedPatient.createdAt).toLocaleString()}</p>
-
-					<button onClick={() => setSelectedPatient(null)}>Close</button>
-				</dialog>
-			)}
-		</main>
+		</div>
 	);
 }
 
