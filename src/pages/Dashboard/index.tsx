@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 
 import type { Patient, PatientFormData } from "../../types/patient";
 import PatientCard from "../../components/PatientCard";
 import PatientCardSkeleton from "../../components/PatientCardSkeleton";
 import AddPatientModal from "../../components/AddPatientModal";
 import EditPatientModal from "../../components/EditPatientModal";
-import { normalizePatientFormData } from "../../utils/formUtils";
 import Header from "../../components/Header";
+import Pagination from "../../components/Pagination";
+import { normalizePatientFormData } from "../../utils/formUtils";
 
 function Dashboard() {
 	const [patients, setPatients] = useState<Patient[]>([]);
@@ -17,8 +20,18 @@ function Dashboard() {
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 	const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
-
 	const [expandedId, setExpandedId] = useState<string | null>(null);
+
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const rawPage = searchParams.get("page");
+
+	const parsedPage = Number(rawPage);
+
+	const page =
+		Number.isFinite(parsedPage) && parsedPage > 0 ? Math.floor(parsedPage) : 1;
+
+	const pageSize = 10;
 
 	function toggle(id: string) {
 		setExpandedId((prev) => (prev === id ? null : id));
@@ -46,6 +59,30 @@ function Dashboard() {
 		loadPatients();
 	}, []);
 
+	const sortedPatients = useMemo(() => {
+		return [...patients].sort(
+			(a, b) =>
+				new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+		);
+	}, [patients]);
+
+	const totalPages = Math.ceil(sortedPatients.length / pageSize);
+
+	const paginatedPatients = sortedPatients.slice(
+		(page - 1) * pageSize,
+		page * pageSize,
+	);
+
+	useEffect(() => {
+		if (page > totalPages && totalPages > 0) {
+			setSearchParams({ page: "1" });
+		}
+	}, [page, totalPages, setSearchParams]);
+
+	function updatePage(page: number) {
+		setSearchParams({ page: String(page) });
+	}
+
 	function handleAddPatient(data: PatientFormData) {
 		const cleanData = normalizePatientFormData(data);
 
@@ -56,6 +93,9 @@ function Dashboard() {
 		};
 
 		setPatients((prev) => [...prev, newPatient]);
+
+		setSearchParams({ page: "1" });
+
 		setIsAddModalOpen(false);
 	}
 
@@ -90,26 +130,41 @@ function Dashboard() {
 					Array.from({ length: 5 }).map((_, i) => (
 						<PatientCardSkeleton key={i} />
 					))
-				) : patients.length === 0 ? (
+				) : sortedPatients.length === 0 ? (
 					<div style={emptyState}>
 						<h3>No patients found</h3>
 						<p>Start by adding your first patient.</p>
-
 						<button onClick={() => setIsAddModalOpen(true)}>Add Patient</button>
 					</div>
 				) : (
-					patients.map((patient) => (
-						<PatientCard
-							key={patient.id}
-							patient={patient}
-							isOpen={expandedId === patient.id}
-							onToggle={() => toggle(patient.id)}
-							onEdit={openEdit}
-							onDelete={handleDelete}
-						/>
-					))
+					<AnimatePresence mode="wait">
+						<motion.div
+							key={`${page}-${sortedPatients.length}`}
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -10 }}
+							transition={{ duration: 0.2 }}
+						>
+							{paginatedPatients.map((patient) => (
+								<PatientCard
+									key={patient.id}
+									patient={patient}
+									isOpen={expandedId === patient.id}
+									onToggle={() => toggle(patient.id)}
+									onEdit={openEdit}
+									onDelete={handleDelete}
+								/>
+							))}
+						</motion.div>
+					</AnimatePresence>
 				)}
 			</section>
+
+			<Pagination
+				page={page}
+				totalPages={totalPages}
+				onPageChange={updatePage}
+			/>
 
 			{isAddModalOpen && (
 				<AddPatientModal
