@@ -83,23 +83,32 @@ function Dashboard() {
 
 	return (
 		<div>
-      <Header onAdd={() => setIsAddModalOpen(true)} />
+			<Header onAdd={() => setIsAddModalOpen(true)} />
 
 			<section>
-				{loading
-					? Array.from({ length: 5 }).map((_, i) => (
-							<PatientCardSkeleton key={i} />
-						))
-					: patients.map((patient) => (
-							<PatientCard
-								key={patient.id}
-								patient={patient}
-								isOpen={expandedId === patient.id}
-								onToggle={() => toggle(patient.id)}
-								onEdit={openEdit}
-								onDelete={handleDelete}
-							/>
-						))}
+				{loading ? (
+					Array.from({ length: 5 }).map((_, i) => (
+						<PatientCardSkeleton key={i} />
+					))
+				) : patients.length === 0 ? (
+					<div style={emptyState}>
+						<h3>No patients found</h3>
+						<p>Start by adding your first patient.</p>
+
+						<button onClick={() => setIsAddModalOpen(true)}>Add Patient</button>
+					</div>
+				) : (
+					patients.map((patient) => (
+						<PatientCard
+							key={patient.id}
+							patient={patient}
+							isOpen={expandedId === patient.id}
+							onToggle={() => toggle(patient.id)}
+							onEdit={openEdit}
+							onDelete={handleDelete}
+						/>
+					))
+				)}
 			</section>
 
 			{isAddModalOpen && (
@@ -122,5 +131,14 @@ function Dashboard() {
 		</div>
 	);
 }
+
+const emptyState: React.CSSProperties = {
+	textAlign: "center",
+	padding: "40px 20px",
+	border: "1px dashed #ddd",
+	borderRadius: 8,
+	marginTop: 20,
+	color: "#666",
+};
 
 export default Dashboard;
