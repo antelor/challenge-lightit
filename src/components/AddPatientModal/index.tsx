@@ -1,46 +1,73 @@
-import type { Dispatch, SetStateAction } from "react";
-import PatientForm from "../PatientForm";
-
-type FormState = {
-  name: string;
-  avatar: string;
-  description: string;
-  website: string;
-};
+import { useForm } from "react-hook-form";
+import type { PatientFormData } from "../../types/patient";
 
 type Props = {
-  formData: FormState;
-  setFormData: Dispatch<SetStateAction<FormState>>;
-  onSave: () => void;
+  onSave: (data: PatientFormData) => void;
   onClose: () => void;
 };
 
-function AddPatientModal({
-  formData,
-  setFormData,
-  onSave,
-  onClose,
-}: Props) {
+function AddPatientModal({ onSave, onClose }: Props) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<PatientFormData>();
+
   return (
-    <div style={overlayStyle}>
-      <div style={modalStyle}>
+    <div style={overlay}>
+      <div style={modal}>
         <h2>Add Patient</h2>
 
-        <PatientForm
-          formData={formData}
-          setFormData={setFormData}
-        />
+        <form onSubmit={handleSubmit(onSave)}>
+          <input
+            placeholder="Name"
+            {...register("name", { required: "Name is required" })}
+          />
+          {errors.name && <p>{errors.name.message}</p>}
 
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={onSave}>Save</button>
-          <button onClick={onClose}>Cancel</button>
-        </div>
+          <input
+            placeholder="Avatar URL"
+            {...register("avatar", {
+              required: "Avatar is required",
+              pattern: {
+                value: /^https?:\/\/.+/,
+                message: "Invalid URL",
+              },
+            })}
+          />
+          {errors.avatar && <p>{errors.avatar.message}</p>}
+
+          <textarea
+            placeholder="Description"
+            {...register("description", {
+              required: "Description is required",
+            })}
+          />
+          {errors.description && <p>{errors.description.message}</p>}
+
+          <input
+            placeholder="Website"
+            {...register("website", {
+              required: "Website is required",
+              pattern: {
+                value: /^https?:\/\/.+/,
+                message: "Invalid URL",
+              },
+            })}
+          />
+          {errors.website && <p>{errors.website.message}</p>}
+
+          <button type="submit">Save</button>
+          <button type="button" onClick={onClose}>
+            Cancel
+          </button>
+        </form>
       </div>
     </div>
   );
 }
 
-const overlayStyle: React.CSSProperties = {
+const overlay: React.CSSProperties = {
   position: "fixed",
   inset: 0,
   background: "rgba(0,0,0,0.5)",
@@ -49,8 +76,8 @@ const overlayStyle: React.CSSProperties = {
   alignItems: "center",
 };
 
-const modalStyle: React.CSSProperties = {
-  background: "#fff",
+const modal: React.CSSProperties = {
+  background: "white",
   padding: 20,
   borderRadius: 8,
   minWidth: 320,

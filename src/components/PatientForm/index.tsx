@@ -1,38 +1,59 @@
+import type { UseFormRegister, FieldErrors } from "react-hook-form";
 import type { PatientFormData } from "../../types/patient";
 
 type Props = {
-	formData: PatientFormData;
-	setFormData: (data: PatientFormData) => void;
+	register: UseFormRegister<PatientFormData>;
+	errors: FieldErrors<PatientFormData>;
 };
 
-function PatientForm({ formData, setFormData }: Props) {
+function PatientForm({ register, errors }: Props) {
 	return (
 		<div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-			<input
-				placeholder="Name"
-				value={formData.name}
-				onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-			/>
+			<div>
+				<input
+					placeholder="Name"
+					{...register("name", { required: "Name is required" })}
+				/>
+				{errors.name && <small>{errors.name.message}</small>}
+			</div>
 
-			<input
-				placeholder="Avatar"
-				value={formData.avatar}
-				onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-			/>
+			<div>
+				<input
+					placeholder="Avatar"
+					{...register("avatar", {
+						required: "Avatar is required",
+						pattern: {
+							value: /^https?:\/\/.+/,
+							message: "Invalid URL",
+						},
+					})}
+				/>
+				{errors.avatar && <small>{errors.avatar.message}</small>}
+			</div>
 
-			<textarea
-				placeholder="Description"
-				value={formData.description}
-				onChange={(e) =>
-					setFormData({ ...formData, description: e.target.value })
-				}
-			/>
+			<div>
+				<textarea
+					placeholder="Description"
+					{...register("description", {
+						required: "Description is required",
+					})}
+				/>
+				{errors.description && <small>{errors.description.message}</small>}
+			</div>
 
-			<input
-				placeholder="Website"
-				value={formData.website}
-				onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-			/>
+			<div>
+				<input
+					placeholder="Website"
+					{...register("website", {
+						required: "Website is required",
+						pattern: {
+							value: /^https?:\/\/.+/,
+							message: "Invalid URL",
+						},
+					})}
+				/>
+				{errors.website && <small>{errors.website.message}</small>}
+			</div>
 		</div>
 	);
 }
