@@ -1,77 +1,37 @@
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
-import AddPatientModal from "../../components/AddPatientModal";
-import ConfirmModal from "../../components/ConfirmModal";
-import EditPatientModal from "../../components/EditPatientModal";
-import EmptyState from "../../components/EmptyState";
-import Header from "../../components/Header";
-import Pagination from "../../components/Pagination";
+
+import type { Patient } from "../../types/patient";
+import type { PatientFormData } from "../../types/patient";
+
 import PatientCard from "../../components/PatientCard";
 import PatientCardSkeleton from "../../components/PatientCardSkeleton";
+import AddPatientModal from "../../components/AddPatientModal";
+import EditPatientModal from "../../components/EditPatientModal";
+import Header from "../../components/Header";
+import Pagination from "../../components/Pagination";
+import EmptyState from "../../components/EmptyState";
+import ConfirmModal from "../../components/ConfirmModal";
+
+import toast from "react-hot-toast";
+
 import { usePagination } from "../../hooks/usePagination";
-import type { Patient, PatientFormData } from "../../types/patient";
-import { normalizePatientFormData } from "../../utils/formUtils";
+import { usePatients } from "../../hooks/usePatients";
 
 const PAGE_SIZE = 10;
 
 function Dashboard() {
-	const [patients, setPatients] = useState<Patient[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const { patients, loading, error, addPatient, editPatient, deletePatient } =
+		usePatients();
 
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 	const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 
 	const [deleteTarget, setDeleteTarget] = useState<Patient | null>(null);
-
-	function toggle(id: string) {
-		setExpandedId((prev) => (prev === id ? null : id));
-	}
-
-	useEffect(() => {
-		async function loadPatients() {
-			try {
-				setLoading(true);
-				setError(null);
-
-				const res = await fetch(import.meta.env.VITE_API_URL);
-
-				if (!res.ok) throw new Error("Failed to fetch patients");
-
-				const data: Patient[] = await res.json();
-
-				const normalized = data.map((p) => ({
-					...p,
-					website:
-						typeof p.website === "string" && p.website.trim().length > 0
-							? p.website.startsWith("http://") ||
-								p.website.startsWith("https://")
-								? p.website
-								: `https://${p.website}`
-							: "#",
-				}));
-
-				setPatients(normalized);
-			} catch (err) {
-				setError(err instanceof Error ? err.message : "Something went wrong");
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		loadPatients();
-	}, []);
-
-	const sortedPatients = useMemo(() => {
-		return [...patients].sort(
-			(a, b) =>
-				new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-		);
-	}, [patients]);
 
 	const {
 		page,
@@ -80,20 +40,17 @@ function Dashboard() {
 		updatePage,
 		resetPage,
 	} = usePagination({
-		items: sortedPatients,
+		items: patients,
 		pageSize: PAGE_SIZE,
 	});
 
+	function toggle(id: string) {
+		setExpandedId((prev) => (prev === id ? null : id));
+	}
+
 	function handleAddPatient(data: PatientFormData) {
-		const cleanData = normalizePatientFormData(data);
+		addPatient(data);
 
-		const newPatient: Patient = {
-			id: crypto.randomUUID(),
-			createdAt: new Date().toISOString(),
-			...cleanData,
-		};
-
-		setPatients((prev) => [...prev, newPatient]);
 		resetPage();
 		setIsAddModalOpen(false);
 	}
@@ -101,9 +58,7 @@ function Dashboard() {
 	function handleEditPatient(data: PatientFormData) {
 		if (!editingPatient) return;
 
-		setPatients((prev) =>
-			prev.map((p) => (p.id === editingPatient.id ? { ...p, ...data } : p)),
-		);
+		editPatient(editingPatient.id, data);
 
 		setEditingPatient(null);
 		setIsEditModalOpen(false);
@@ -116,8 +71,10 @@ function Dashboard() {
 	function handleDelete() {
 		if (!deleteTarget) return;
 
-		setPatients((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+		deletePatient(deleteTarget.id);
+
 		setDeleteTarget(null);
+
 		toast.success("Patient deleted successfully");
 	}
 
@@ -126,7 +83,9 @@ function Dashboard() {
 		setIsEditModalOpen(true);
 	}
 
-	if (error) return <p style={{ color: "red" }}>{error}</p>;
+	if (error) {
+		return <p style={{ color: "red" }}>{error}</p>;
+	}
 
 	return (
 		<div>
@@ -135,21 +94,34 @@ function Dashboard() {
 			<section>
 				{loading ? (
 					<div style={grid}>
-						{Array.from({ length: PAGE_SIZE }).map((_, i) => (
+						{Array.from({
+							length: PAGE_SIZE,
+						}).map((_, i) => (
 							<PatientCardSkeleton key={i} />
 						))}
 					</div>
-				) : sortedPatients.length === 0 ? (
+				) : patients.length === 0 ? (
 					<EmptyState setIsAddModalOpen={setIsAddModalOpen} />
 				) : (
 					<AnimatePresence mode="wait">
 						<motion.div
 							style={grid}
-							key={`${page}-${sortedPatients.length}`}
-							initial={{ opacity: 0, y: 10 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: -10 }}
-							transition={{ duration: 0.2 }}
+							key={`${page}-${patients.length}`}
+							initial={{
+								opacity: 0,
+								y: 10,
+							}}
+							animate={{
+								opacity: 1,
+								y: 0,
+							}}
+							exit={{
+								opacity: 0,
+								y: -10,
+							}}
+							transition={{
+								duration: 0.2,
+							}}
 						>
 							{paginatedPatients.map((patient) => (
 								<PatientCard

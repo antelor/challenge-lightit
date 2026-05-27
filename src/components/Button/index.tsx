@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ButtonHTMLAttributes } from "react";
-import { getVariantStyle } from "./utils";
+import { getVariantStyle } from "../../utils/buttonUtils";
 import type { Variant } from "../../types/buttons";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
