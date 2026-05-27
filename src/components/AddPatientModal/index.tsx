@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+
 import type { PatientFormData } from "../../types/patient";
 import PatientForm from "../PatientForm";
-import { toast } from "react-hot-toast";
+import Button from "../Button";
 
 type Props = {
 	onSave: (data: PatientFormData) => void;
@@ -18,6 +20,7 @@ function AddPatientModal({ onSave, onClose }: Props) {
 	function onSubmit(data: PatientFormData) {
 		onSave(data);
 		toast.success("Patient added successfully");
+		onClose();
 	}
 
 	function onError() {
@@ -25,17 +28,26 @@ function AddPatientModal({ onSave, onClose }: Props) {
 	}
 
 	return (
-		<div style={overlay}>
-			<div style={modal}>
-				<h2>Add Patient</h2>
+		<div style={overlay} onClick={onClose}>
+			<div style={modal} onClick={(e) => e.stopPropagation()}>
+				<div style={header}>
+					<h2 style={title}>Add Patient</h2>
+				</div>
 
-				<form onSubmit={handleSubmit(onSubmit, onError)}>
-					<PatientForm register={register} errors={errors} />
+				<form style={form} onSubmit={handleSubmit(onSubmit, onError)}>
+					<div style={content}>
+						<PatientForm register={register} errors={errors} />
+					</div>
 
-					<button type="submit">Save</button>
-					<button type="button" onClick={onClose}>
-						Cancel
-					</button>
+					<div style={footer}>
+						<Button type="button" variant="danger" onClick={onClose}>
+							Cancel
+						</Button>
+
+						<Button type="submit" variant="primary">
+							Save Patient
+						</Button>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -45,17 +57,53 @@ function AddPatientModal({ onSave, onClose }: Props) {
 const overlay: React.CSSProperties = {
 	position: "fixed",
 	inset: 0,
-	background: "rgba(0,0,0,0.5)",
+	background: "rgba(0,0,0,0.55)",
 	display: "flex",
 	justifyContent: "center",
 	alignItems: "center",
+	padding: 16,
+	zIndex: 50,
 };
 
 const modal: React.CSSProperties = {
 	background: "white",
-	padding: 20,
-	borderRadius: 8,
-	minWidth: 320,
+	borderRadius: 12,
+	width: "100%",
+	maxWidth: 520,
+	boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+	overflow: "hidden",
+};
+
+const header: React.CSSProperties = {
+	padding: "16px 18px",
+	borderBottom: "1px solid #e5e7eb",
+};
+
+const title: React.CSSProperties = {
+	margin: 0,
+	fontSize: 18,
+	fontWeight: 600,
+};
+
+const form: React.CSSProperties = {
+	display: "flex",
+	flexDirection: "column",
+	width: "100%",
+};
+
+const content: React.CSSProperties = {
+	padding: 18,
+	display: "flex",
+	flexDirection: "column",
+	gap: 14,
+};
+
+const footer: React.CSSProperties = {
+	display: "flex",
+	justifyContent: "flex-end",
+	gap: 10,
+	padding: 16,
+	borderTop: "1px solid #e5e7eb",
 };
 
 export default AddPatientModal;
