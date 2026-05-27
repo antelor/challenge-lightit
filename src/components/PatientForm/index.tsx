@@ -15,7 +15,7 @@ function PatientForm({ register, errors }: Props) {
 					{...register("name", {
 						required: "Name is required",
 						validate: {
-							maxLength: (value) => value.trim().length >= 30 || "Name is too long",
+							maxLength: (value) => value.trim().length <= 30 || "Name is too long",
 						},
 					})}
 				/>
