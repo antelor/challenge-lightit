@@ -13,7 +13,7 @@ type Props = {
 
 function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 	return (
-		<div style={card}>
+		<div style={card} className="patient-card">
 			<div style={header}>
 				<div style={left}>
 					<Avatar src={patient.avatar} name={patient.name} size={40} />
@@ -40,10 +40,14 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 							<p style={description}>{patient.description}</p>
 
 							<div style={footer}>
-								<a href={patient.website} target="_blank">
+								<a
+									href={patient.website}
+									target="_blank"
+									rel="noreferrer noopener"
+									style={buttonStyle}
+								>
 									Visit website
 								</a>
-
 								<div style={actions}>
 									<Button onClick={() => onEdit(patient)}>Edit</Button>
 									<Button variant="danger" onClick={() => onDelete(patient.id)}>
@@ -69,6 +73,7 @@ const card: React.CSSProperties = {
 	padding: 12,
 	marginBottom: 10,
 	height: "fit-content",
+	transition: "transform 0.15s ease, box-shadow 0.15s ease",
 };
 
 const header: React.CSSProperties = {
@@ -119,6 +124,27 @@ const meta: React.CSSProperties = {
 	fontSize: 12,
 	color: "#9ca3af",
 	marginTop: 6,
+};
+
+const buttonStyle: React.CSSProperties = {
+	display: "inline-flex",
+	alignItems: "center",
+	justifyContent: "center",
+	gap: 6,
+
+	padding: "6px 10px",
+	borderRadius: 8,
+
+	fontSize: 13,
+	fontWeight: 500,
+	textDecoration: "none",
+
+	border: "1px solid #e5e7eb",
+	background: "#f9fafb",
+	color: "#111827",
+
+	transition: "all 0.15s ease",
+	cursor: "pointer",
 };
 
 export default PatientCard;

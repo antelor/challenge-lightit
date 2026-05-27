@@ -1,5 +1,3 @@
-import "../../styles/animations.css";
-
 function PatientCardSkeleton() {
 	return (
 		<div style={card}>
@@ -12,10 +10,10 @@ function PatientCardSkeleton() {
 					</div>
 				</div>
 
-				<div style={btn} />
+				<div style={button} />
 			</div>
 
-			<div style={collapsedHint} />
+			<div style={hint} />
 		</div>
 	);
 }
@@ -23,16 +21,16 @@ function PatientCardSkeleton() {
 const shimmer: React.CSSProperties = {
 	background: "linear-gradient(90deg, #eee 25%, #f5f5f5 37%, #eee 63%)",
 	backgroundSize: "400% 100%",
-	animation: "shimmer 1.4s ease infinite",
-	borderRadius: 6,
+	animation: "shimmer 1.2s ease infinite",
+	borderRadius: 8,
 };
 
 const card: React.CSSProperties = {
 	padding: 12,
-	border: "1px solid #eee",
+	border: "1px solid #e5e7eb",
 	borderRadius: 12,
 	marginBottom: 10,
-	height: "fit-content",
+	background: "white",
 };
 
 const header: React.CSSProperties = {
@@ -62,27 +60,27 @@ const textBlock: React.CSSProperties = {
 
 const lineName: React.CSSProperties = {
 	...shimmer,
-	width: 120,
+	width: 140,
 	height: 14,
 };
 
 const lineSub: React.CSSProperties = {
 	...shimmer,
-	width: 70,
+	width: 90,
 	height: 10,
 };
 
-const btn: React.CSSProperties = {
+const button: React.CSSProperties = {
 	...shimmer,
 	width: 80,
 	height: 28,
 };
 
-const collapsedHint: React.CSSProperties = {
+const hint: React.CSSProperties = {
 	...shimmer,
 	marginTop: 12,
 	height: 10,
-	width: "60%",
+	width: "65%",
 };
 
 export default PatientCardSkeleton;
