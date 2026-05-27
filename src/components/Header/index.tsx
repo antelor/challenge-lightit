@@ -21,6 +21,7 @@ const header: React.CSSProperties = {
 	justifyContent: "space-between",
 	alignItems: "center",
 	padding: "12px 0",
+	backgroundColor: "#f9fafb",
 	borderBottom: "1px solid #e5e7eb",
 	marginBottom: 16,
 };

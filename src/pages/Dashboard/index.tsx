@@ -1,20 +1,12 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-
-import type { Patient } from "../../types/patient";
-import type { PatientFormData } from "../../types/patient";
-
-import PatientCard from "../../components/PatientCard";
-import PatientCardSkeleton from "../../components/PatientCardSkeleton";
+import type { Patient, PatientFormData } from "../../types/patient";
 import AddPatientModal from "../../components/AddPatientModal";
+import ConfirmModal from "../../components/ConfirmModal";
 import EditPatientModal from "../../components/EditPatientModal";
 import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
-import EmptyState from "../../components/EmptyState";
-import ConfirmModal from "../../components/ConfirmModal";
-
 import toast from "react-hot-toast";
-
+import PatientsGrid from "../../components/PatientsGrid";
 import { usePagination } from "../../hooks/usePagination";
 import { usePatients } from "../../hooks/usePatients";
 
@@ -92,50 +84,17 @@ function Dashboard() {
 			<Header onAdd={() => setIsAddModalOpen(true)} />
 
 			<section>
-				{loading ? (
-					<div style={grid}>
-						{Array.from({
-							length: PAGE_SIZE,
-						}).map((_, i) => (
-							<PatientCardSkeleton key={i} />
-						))}
-					</div>
-				) : patients.length === 0 ? (
-					<EmptyState setIsAddModalOpen={setIsAddModalOpen} />
-				) : (
-					<AnimatePresence mode="wait">
-						<motion.div
-							style={grid}
-							key={`${page}-${patients.length}`}
-							initial={{
-								opacity: 0,
-								y: 10,
-							}}
-							animate={{
-								opacity: 1,
-								y: 0,
-							}}
-							exit={{
-								opacity: 0,
-								y: -10,
-							}}
-							transition={{
-								duration: 0.2,
-							}}
-						>
-							{paginatedPatients.map((patient) => (
-								<PatientCard
-									key={patient.id}
-									patient={patient}
-									isOpen={expandedId === patient.id}
-									onToggle={() => toggle(patient.id)}
-									onEdit={openEdit}
-									onDelete={() => requestDelete(patient)}
-								/>
-							))}
-						</motion.div>
-					</AnimatePresence>
-				)}
+				<PatientsGrid
+					loading={loading}
+					patients={paginatedPatients}
+					page={page}
+					pageSize={PAGE_SIZE}
+					expandedId={expandedId}
+					onToggle={toggle}
+					onEdit={openEdit}
+					onDelete={requestDelete}
+					setIsAddModalOpen={setIsAddModalOpen}
+				/>
 			</section>
 
 			<Pagination
@@ -173,12 +132,5 @@ function Dashboard() {
 		</div>
 	);
 }
-
-const grid: React.CSSProperties = {
-	display: "grid",
-	gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-	gap: 12,
-	alignItems: "start",
-};
 
 export default Dashboard;
