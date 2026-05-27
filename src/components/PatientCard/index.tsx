@@ -12,19 +12,23 @@ type Props = {
 };
 
 function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
+	const hasWebsite =
+		patient.website !== "#" && patient.website.trim().length > 0;
+
 	return (
-		<div style={card} className="patient-card">
+		<div style={card}>
 			<div style={header}>
 				<div style={left}>
 					<Avatar src={patient.avatar} name={patient.name} size={40} />
-
 					<div>
 						<div style={name}>{patient.name}</div>
 						<div style={sub}>Patient</div>
 					</div>
 				</div>
 
-				<Button onClick={onToggle}>{isOpen ? "Collapse" : "Expand"}</Button>
+				<Button onClick={onToggle}>
+					{isOpen ? "Collapse" : "Expand"}
+				</Button>
 			</div>
 
 			<AnimatePresence>
@@ -40,25 +44,36 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 							<p style={description}>{patient.description}</p>
 
 							<div style={footer}>
-								<a
-									href={patient.website}
-									target="_blank"
-									rel="noreferrer noopener"
-									style={buttonStyle}
-								>
-									Visit website
-								</a>
+								<div style={meta}>
+									Created{" "}
+									{new Date(patient.createdAt).toLocaleString()}
+								</div>
+
 								<div style={actions}>
-									<Button onClick={() => onEdit(patient)}>Edit</Button>
-									<Button variant="danger" onClick={() => onDelete(patient.id)}>
+									<Button onClick={() => onEdit(patient)}>
+										Edit
+									</Button>
+									<Button
+										variant="danger"
+										onClick={() => onDelete(patient.id)}
+									>
 										Delete
 									</Button>
 								</div>
 							</div>
 
-							<div style={meta}>
-								Created {new Date(patient.createdAt).toLocaleString()}
-							</div>
+							{hasWebsite && (
+								<div>
+									<a
+										href={patient.website}
+										target="_blank"
+										rel="noreferrer noopener"
+										style={buttonStyle}
+									>
+										Visit website
+									</a>
+								</div>
+							)}
 						</div>
 					</motion.div>
 				)}
@@ -72,8 +87,6 @@ const card: React.CSSProperties = {
 	borderRadius: 12,
 	padding: 12,
 	marginBottom: 10,
-	height: "fit-content",
-	transition: "transform 0.15s ease, box-shadow 0.15s ease",
 };
 
 const header: React.CSSProperties = {
@@ -115,35 +128,27 @@ const footer: React.CSSProperties = {
 	alignItems: "center",
 };
 
-const actions: React.CSSProperties = {
-	display: "flex",
-	gap: 6,
-};
-
 const meta: React.CSSProperties = {
 	fontSize: 12,
 	color: "#9ca3af",
-	marginTop: 6,
+};
+
+const actions: React.CSSProperties = {
+	display: "flex",
+	gap: 6,
 };
 
 const buttonStyle: React.CSSProperties = {
 	display: "inline-flex",
 	alignItems: "center",
 	justifyContent: "center",
-	gap: 6,
-
 	padding: "6px 10px",
 	borderRadius: 8,
-
 	fontSize: 13,
-	fontWeight: 500,
 	textDecoration: "none",
-
 	border: "1px solid #e5e7eb",
 	background: "#f9fafb",
 	color: "#111827",
-
-	transition: "all 0.15s ease",
 	cursor: "pointer",
 };
 
