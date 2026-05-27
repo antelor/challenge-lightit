@@ -1,7 +1,14 @@
-import Dashboard from './pages/Dashboard/index.tsx'
+import Dashboard from "./pages/Dashboard/index.tsx";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
-  return <Dashboard />;
+	return (
+		<QueryClientProvider client={queryClient}>
+			<Dashboard />
+		</QueryClientProvider>
+	);
 }
 
 export default App;
