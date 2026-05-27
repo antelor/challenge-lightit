@@ -37,15 +37,18 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 						style={{ overflow: "hidden" }}
 					>
 						<div style={content}>
-							<Avatar src={patient.avatar} name={patient.name} size={50} />
+							<div style={description}>
+								<Avatar src={patient.avatar} name={patient.name} size={50} />
+								<div>{patient.description}</div>
+							</div>
 
-							<p>{patient.description}</p>
+							<div style={footer}>
+								<a href={patient.website} target="_blank">
+									Visit
+								</a>
 
-							<a href={patient.website} target="_blank">
-								Visit
-							</a>
-
-							<p>Created: {new Date(patient.createdAt).toLocaleString()}</p>
+								<div>Created: {new Date(patient.createdAt).toLocaleString()}</div>
+							</div>
 						</div>
 					</motion.div>
 				)}
@@ -59,6 +62,20 @@ const card: React.CSSProperties = {
 	padding: 12,
 	borderRadius: 8,
 	marginBottom: 10,
+};
+
+const description: React.CSSProperties = {
+	display: "flex",
+	flexDirection: "row",
+	alignItems: "flex-start",
+	justifyContent: "space-between",
+	gap: 12,
+};
+
+const footer: React.CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
 };
 
 const header: React.CSSProperties = {
