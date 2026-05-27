@@ -140,14 +140,17 @@ function Dashboard() {
 
 			<section>
 				{loading ? (
-					Array.from({ length: 5 }).map((_, i) => (
-						<PatientCardSkeleton key={i} />
-					))
+					<div style={grid}>
+						{Array.from({ length: 10 }).map((_, i) => (
+							<PatientCardSkeleton key={i} />
+						))}
+					</div>
 				) : sortedPatients.length === 0 ? (
 					<EmptyState setIsAddModalOpen={setIsAddModalOpen} />
 				) : (
 					<AnimatePresence mode="wait">
-						<motion.div style={grid}
+						<motion.div
+							style={grid}
 							key={`${page}-${sortedPatients.length}`}
 							initial={{ opacity: 0, y: 10 }}
 							animate={{ opacity: 1, y: 0 }}
