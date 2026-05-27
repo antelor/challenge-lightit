@@ -1,3 +1,5 @@
+import Button from "../Button";
+
 type Props = {
 	onAdd: () => void;
 };
@@ -7,7 +9,9 @@ function Header({ onAdd }: Props) {
 		<header style={header}>
 			<h1 style={title}>Patient Dashboard</h1>
 
-			<button onClick={onAdd}>Add Patient</button>
+			<Button variant="primary" onClick={onAdd}>
+				Add Patient
+			</Button>
 		</header>
 	);
 }

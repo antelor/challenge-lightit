@@ -9,7 +9,7 @@ import AddPatientModal from "../../components/AddPatientModal";
 import EditPatientModal from "../../components/EditPatientModal";
 import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
-import { normalizePatientFormData } from "../../utils/formUtils";
+import { normalizePatientFormData } from "./utils";
 import EmptyState from "../../components/EmptyState";
 
 function Dashboard() {

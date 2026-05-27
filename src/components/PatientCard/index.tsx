@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import type { Patient } from "../../types/patient";
 import Avatar from "./Avatar";
+import Button from "../Button";
 
 type Props = {
 	patient: Patient;
@@ -23,7 +24,7 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 					</div>
 				</div>
 
-				<button onClick={onToggle}>{isOpen ? "Collapse" : "Expand"}</button>
+				<Button onClick={onToggle}>{isOpen ? "Collapse" : "Expand"}</Button>
 			</div>
 
 			<AnimatePresence>
@@ -44,8 +45,10 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 								</a>
 
 								<div style={actions}>
-									<button onClick={() => onEdit(patient)}>Edit</button>
-									<button onClick={() => onDelete(patient.id)}>Delete</button>
+									<Button onClick={() => onEdit(patient)}>Edit</Button>
+									<Button variant="danger" onClick={() => onDelete(patient.id)}>
+										Delete
+									</Button>
 								</div>
 							</div>
 

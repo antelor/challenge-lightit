@@ -1,3 +1,5 @@
+import Button from "../Button";
+
 type Props = {
 	page: number;
 	totalPages: number;
@@ -9,23 +11,23 @@ function Pagination({ page, totalPages, onPageChange }: Props) {
 
 	return (
 		<div style={container}>
-			<button
+			<Button
 				onClick={() => onPageChange(Math.max(page - 1, 1))}
 				disabled={page === 1}
 			>
 				Prev
-			</button>
+			</Button>
 
 			<span>
 				Page {page} / {totalPages}
 			</span>
 
-			<button
+			<Button
 				onClick={() => onPageChange(Math.min(page + 1, totalPages))}
 				disabled={page === totalPages}
 			>
 				Next
-			</button>
+			</Button>
 		</div>
 	);
 }
