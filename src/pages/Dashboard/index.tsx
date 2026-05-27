@@ -10,6 +10,7 @@ import EditPatientModal from "../../components/EditPatientModal";
 import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import { normalizePatientFormData } from "../../utils/formUtils";
+import EmptyState from "../../components/EmptyState";
 
 function Dashboard() {
 	const [patients, setPatients] = useState<Patient[]>([]);
@@ -131,11 +132,7 @@ function Dashboard() {
 						<PatientCardSkeleton key={i} />
 					))
 				) : sortedPatients.length === 0 ? (
-					<div style={emptyState}>
-						<h3>No patients found</h3>
-						<p>Start by adding your first patient.</p>
-						<button onClick={() => setIsAddModalOpen(true)}>Add Patient</button>
-					</div>
+          <EmptyState setIsAddModalOpen={setIsAddModalOpen} />
 				) : (
 					<AnimatePresence mode="wait">
 						<motion.div
@@ -186,14 +183,5 @@ function Dashboard() {
 		</div>
 	);
 }
-
-const emptyState: React.CSSProperties = {
-	textAlign: "center",
-	padding: "40px 20px",
-	border: "1px dashed #ddd",
-	borderRadius: 8,
-	marginTop: 20,
-	color: "#666",
-};
 
 export default Dashboard;
