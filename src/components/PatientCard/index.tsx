@@ -23,9 +23,7 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 					</div>
 				</div>
 
-				<button onClick={onToggle}>
-					{isOpen ? "Collapse" : "Expand"}
-				</button>
+				<button onClick={onToggle}>{isOpen ? "Collapse" : "Expand"}</button>
 			</div>
 
 			<AnimatePresence>
@@ -46,18 +44,13 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 								</a>
 
 								<div style={actions}>
-									<button onClick={() => onEdit(patient)}>
-										Edit
-									</button>
-									<button onClick={() => onDelete(patient.id)}>
-										Delete
-									</button>
+									<button onClick={() => onEdit(patient)}>Edit</button>
+									<button onClick={() => onDelete(patient.id)}>Delete</button>
 								</div>
 							</div>
 
 							<div style={meta}>
-								Created{" "}
-								{new Date(patient.createdAt).toLocaleString()}
+								Created {new Date(patient.createdAt).toLocaleString()}
 							</div>
 						</div>
 					</motion.div>
@@ -67,13 +60,12 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 	);
 }
 
-/* ---------------- styles ---------------- */
-
 const card: React.CSSProperties = {
 	border: "1px solid #e5e7eb",
 	borderRadius: 12,
 	padding: 12,
 	marginBottom: 10,
+	height: "fit-content",
 };
 
 const header: React.CSSProperties = {

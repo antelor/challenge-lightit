@@ -147,7 +147,7 @@ function Dashboard() {
 					<EmptyState setIsAddModalOpen={setIsAddModalOpen} />
 				) : (
 					<AnimatePresence mode="wait">
-						<motion.div
+						<motion.div style={grid}
 							key={`${page}-${sortedPatients.length}`}
 							initial={{ opacity: 0, y: 10 }}
 							animate={{ opacity: 1, y: 0 }}
@@ -195,5 +195,12 @@ function Dashboard() {
 		</div>
 	);
 }
+
+const grid: React.CSSProperties = {
+	display: "grid",
+	gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+	gap: 12,
+	alignItems: "start",
+};
 
 export default Dashboard;
