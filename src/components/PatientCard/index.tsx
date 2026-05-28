@@ -16,7 +16,7 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 		patient.website !== "#" && patient.website.trim().length > 0;
 
 	return (
-		<div style={card}>
+		<div className="patient-card">
 			<div style={header}>
 				<div style={left}>
 					<Avatar src={patient.avatar} name={patient.name} size={40} />
@@ -81,13 +81,6 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 		</div>
 	);
 }
-
-const card: React.CSSProperties = {
-	border: "1px solid #e5e7eb",
-	borderRadius: 12,
-	padding: 12,
-	marginBottom: 10,
-};
 
 const header: React.CSSProperties = {
 	display: "flex",
