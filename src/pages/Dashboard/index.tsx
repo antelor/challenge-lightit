@@ -10,7 +10,7 @@ import PatientsGrid from "../../components/PatientsGrid";
 import { usePagination } from "../../hooks/usePagination";
 import { usePatients } from "../../hooks/usePatients";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 18;
 
 function Dashboard() {
 	const { patients, loading, error, addPatient, editPatient, deletePatient } =

@@ -48,32 +48,28 @@ function PatientsGrid({
 			<motion.div
 				style={grid}
 				key={`${page}-${patients.length}`}
-				initial={{
-					opacity: 0,
-					y: 10,
-				}}
-				animate={{
-					opacity: 1,
-					y: 0,
-				}}
-				exit={{
-					opacity: 0,
-					y: -10,
-				}}
-				transition={{
-					duration: 0.2,
-				}}
+				variants={container}
+				initial="hidden"
+				animate="show"
+				exit="hidden"
+				transition={{ duration: 0 }}
 			>
 				{patients.map((patient) => (
-					<PatientCard
+					<motion.div
 						key={patient.id}
-						patient={patient}
-						isOpen={expandedId === patient.id}
-						onToggle={() => onToggle(patient.id)}
-						onEdit={onEdit}
-						onDelete={() => onDelete(patient)}
-					/>
-				))}
+						style={card}
+						variants={item}
+						whileHover={{ scale: 1.02 }}
+					>
+						<PatientCard
+							patient={patient}
+							isOpen={expandedId === patient.id}
+							onToggle={() => onToggle(patient.id)}
+							onEdit={onEdit}
+							onDelete={() => onDelete(patient)}
+						/>
+					</motion.div>
+				))}{" "}
 			</motion.div>
 		</AnimatePresence>
 	);
@@ -81,9 +77,35 @@ function PatientsGrid({
 
 const grid: React.CSSProperties = {
 	display: "grid",
-	gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
 	gap: 12,
 	alignItems: "start",
+};
+
+const card: React.CSSProperties = {
+	border: "1px solid #e5e7eb",
+	borderRadius: 12,
+	padding: 12,
+	marginBottom: 10,
+};
+
+const container = {
+	hidden: { opacity: 0 },
+	show: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.08,
+		},
+	},
+};
+
+const item = {
+	hidden: { opacity: 0, y: 10 },
+	show: {
+		opacity: 1,
+		y: 0,
+		transition: { duration: 0.2 },
+	},
 };
 
 export default PatientsGrid;
