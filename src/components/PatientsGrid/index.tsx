@@ -30,9 +30,7 @@ function PatientsGrid({
 	if (loading) {
 		return (
 			<div style={grid}>
-				{Array.from({
-					length: pageSize,
-				}).map((_, i) => (
+				{Array.from({ length: pageSize }).map((_, i) => (
 					<PatientCardSkeleton key={i} />
 				))}
 			</div>
@@ -43,37 +41,37 @@ function PatientsGrid({
 		return <EmptyState setIsAddModalOpen={setIsAddModalOpen} />;
 	}
 
-	return (
-		<AnimatePresence mode="wait">
-			<motion.div
-				style={grid}
-				key={`${page}-${patients.length}`}
-				variants={container}
-				initial="hidden"
-				animate="show"
-				exit="hidden"
-				transition={{ duration: 0 }}
-			>
-				{patients.map((patient) => (
-					<motion.div
-						key={patient.id}
-						style={card}
-						variants={item}
-						whileHover={{ scale: 1.02 }}
-					>
-						<PatientCard
-							patient={patient}
-							isOpen={expandedId === patient.id}
-							onToggle={() => onToggle(patient.id)}
-							onEdit={onEdit}
-							onDelete={() => onDelete(patient)}
-						/>
-					</motion.div>
-				))}{" "}
-			</motion.div>
+return (
+	<motion.div
+		style={grid}
+		key={`${page}-${patients.length}`}
+		variants={container}
+		initial="hidden"
+		animate="show"
+	>
+		<AnimatePresence mode="popLayout">
+			{patients.map((patient) => (
+				<motion.div
+					key={patient.id}
+					layout
+					style={card}
+					variants={item}
+					initial="hidden"
+					animate="show"
+					exit="exit"
+				>
+					<PatientCard
+						patient={patient}
+						isOpen={expandedId === patient.id}
+						onToggle={() => onToggle(patient.id)}
+						onEdit={onEdit}
+						onDelete={() => onDelete(patient)}
+					/>
+				</motion.div>
+			))}
 		</AnimatePresence>
-	);
-}
+	</motion.div>
+);}
 
 const grid: React.CSSProperties = {
 	display: "grid",
@@ -90,9 +88,8 @@ const card: React.CSSProperties = {
 };
 
 const container = {
-	hidden: { opacity: 0 },
+	hidden: {},
 	show: {
-		opacity: 1,
 		transition: {
 			staggerChildren: 0.08,
 		},
@@ -100,12 +97,9 @@ const container = {
 };
 
 const item = {
-	hidden: { opacity: 0, y: 10 },
-	show: {
-		opacity: 1,
-		y: 0,
-		transition: { duration: 0.2 },
-	},
+	hidden: { opacity: 0, y: 10, scale: 0.98 },
+	show: { opacity: 1, y: 0, scale: 1 },
+	exit: { opacity: 0, y: 10, scale: 0.95 },
 };
 
 export default PatientsGrid;
