@@ -1,62 +1,49 @@
 import Button from "../Button";
+import Modal from "../Modal";
 
 type Props = {
-	open: boolean;
-	title: string;
-	message: string;
-	confirmBtnText: string;
-	onConfirm: () => void;
-	onCancel: () => void;
+  open: boolean;
+  title: string;
+  message: string;
+  confirmBtnText: string;
+  onConfirm: () => void;
+  onCancel: () => void;
 };
 
 function ConfirmModal({
-	open,
-	title,
-	message,
-	confirmBtnText,
-	onConfirm,
-	onCancel,
+  open,
+  title,
+  message,
+  confirmBtnText,
+  onConfirm,
+  onCancel,
 }: Props) {
-	if (!open) return null;
+  return (
+    <Modal open={open} onClose={onCancel}>
+      <div style={wrapper}>
+        <h3>{title}</h3>
+        <p>{message}</p>
 
-	return (
-		<div style={overlay}>
-			<div style={modal}>
-				<h3>{title}</h3>
-				<p>{message}</p>
-
-				<div style={actions}>
-					<Button onClick={onCancel}>Cancel</Button>
-					<Button onClick={onConfirm} variant="danger">
-						{confirmBtnText}
-					</Button>
-				</div>
-			</div>
-		</div>
-	);
+        <div style={actions}>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={onConfirm} variant="danger">
+            {confirmBtnText}
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
 }
 
-const overlay: React.CSSProperties = {
-	position: "fixed",
-	inset: 0,
-	background: "rgba(0,0,0,0.4)",
-	display: "flex",
-	justifyContent: "center",
-	alignItems: "center",
-};
-
-const modal: React.CSSProperties = {
-	background: "white",
-	padding: 16,
-	borderRadius: 12,
-	width: 320,
+const wrapper: React.CSSProperties = {
+  padding: 16,
 };
 
 const actions: React.CSSProperties = {
-	display: "flex",
-	justifyContent: "flex-end",
-	gap: 8,
-	marginTop: 12,
+  display: "flex",
+  justifyContent: "flex-end",
+  gap: 8,
+  marginTop: 12,
 };
 
 export default ConfirmModal;

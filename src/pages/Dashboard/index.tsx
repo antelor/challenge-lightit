@@ -17,12 +17,8 @@ function Dashboard() {
 		usePatients();
 
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
 	const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
-
 	const [expandedId, setExpandedId] = useState<string | null>(null);
-
 	const [deleteTarget, setDeleteTarget] = useState<Patient | null>(null);
 
 	const {
@@ -42,18 +38,22 @@ function Dashboard() {
 
 	function handleAddPatient(data: PatientFormData) {
 		addPatient(data);
-
 		resetPage();
 		setIsAddModalOpen(false);
 	}
 
 	function handleEditPatient(data: PatientFormData) {
 		if (!editingPatient) return;
-
 		editPatient(editingPatient.id, data);
-
 		setEditingPatient(null);
-		setIsEditModalOpen(false);
+	}
+
+	function openEdit(patient: Patient) {
+		setEditingPatient(patient);
+	}
+
+	function closeEdit() {
+		setEditingPatient(null);
 	}
 
 	function requestDelete(patient: Patient) {
@@ -62,17 +62,9 @@ function Dashboard() {
 
 	function handleDelete() {
 		if (!deleteTarget) return;
-
 		deletePatient(deleteTarget.id);
-
 		setDeleteTarget(null);
-
 		toast.success("Patient deleted successfully");
-	}
-
-	function openEdit(patient: Patient) {
-		setEditingPatient(patient);
-		setIsEditModalOpen(true);
 	}
 
 	if (error) {
@@ -103,23 +95,18 @@ function Dashboard() {
 				onPageChange={updatePage}
 			/>
 
-			{isAddModalOpen && (
-				<AddPatientModal
-					onSave={handleAddPatient}
-					onClose={() => setIsAddModalOpen(false)}
-				/>
-			)}
+			<AddPatientModal
+				open={isAddModalOpen}
+				onSave={handleAddPatient}
+				onClose={() => setIsAddModalOpen(false)}
+			/>
 
-			{isEditModalOpen && editingPatient && (
-				<EditPatientModal
-					patient={editingPatient}
-					onUpdate={handleEditPatient}
-					onClose={() => {
-						setIsEditModalOpen(false);
-						setEditingPatient(null);
-					}}
-				/>
-			)}
+			<EditPatientModal
+				open={editingPatient !== null}
+				patient={editingPatient!}
+				onUpdate={handleEditPatient}
+				onClose={closeEdit}
+			/>
 
 			<ConfirmModal
 				open={!!deleteTarget}
