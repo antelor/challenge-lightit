@@ -41,37 +41,38 @@ function PatientsGrid({
 		return <EmptyState setIsAddModalOpen={setIsAddModalOpen} />;
 	}
 
-return (
-	<motion.div
-		style={grid}
-		key={`${page}-${patients.length}`}
-		variants={container}
-		initial="hidden"
-		animate="show"
-	>
-		<AnimatePresence mode="popLayout">
-			{patients.map((patient) => (
-				<motion.div
-					key={patient.id}
-					layout
-					style={card}
-					variants={item}
-					initial="hidden"
-					animate="show"
-					exit="exit"
-				>
-					<PatientCard
-						patient={patient}
-						isOpen={expandedId === patient.id}
-						onToggle={() => onToggle(patient.id)}
-						onEdit={onEdit}
-						onDelete={() => onDelete(patient)}
-					/>
-				</motion.div>
-			))}
-		</AnimatePresence>
-	</motion.div>
-);}
+	return (
+		<motion.div
+			style={grid}
+			key={`${page}-${patients.length}`}
+			variants={container}
+			initial="hidden"
+			animate="show"
+		>
+			<AnimatePresence mode="popLayout">
+				{patients.map((patient) => (
+					<motion.div
+						key={patient.id}
+						layout
+						style={card}
+						variants={item}
+						initial="hidden"
+						animate="show"
+						exit="exit"
+					>
+						<PatientCard
+							patient={patient}
+							isOpen={expandedId === patient.id}
+							onToggle={() => onToggle(patient.id)}
+							onEdit={onEdit}
+							onDelete={() => onDelete(patient)}
+						/>
+					</motion.div>
+				))}
+			</AnimatePresence>
+		</motion.div>
+	);
+}
 
 const grid: React.CSSProperties = {
 	display: "grid",
