@@ -104,7 +104,7 @@ function Dashboard() {
 
 			<EditPatientModal
 				open={editingPatient !== null}
-				patient={editingPatient!}
+				patient={editingPatient}
 				onUpdate={handleEditPatient}
 				onClose={closeEdit}
 			/>
