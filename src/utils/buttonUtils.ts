@@ -1,4 +1,4 @@
-import type { Variant } from "../../types/buttons";
+import type { Variant } from "../types/buttons";
 
 export function getVariantStyle(variant: Variant, hovered: boolean): React.CSSProperties {
 	switch (variant) {
