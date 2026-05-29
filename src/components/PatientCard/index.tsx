@@ -13,8 +13,7 @@ type Props = {
 };
 
 function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
-	const hasWebsite =
-		patient.website !== "#" && patient.website.trim().length > 0;
+	const hasWebsite = patient.website.trim().length > 0;
 
 	return (
 		<div className="patient-card">
@@ -151,6 +150,6 @@ const expandBtn: React.CSSProperties = {
 	display: "inline-flex",
 	alignItems: "center",
 	gap: 4,
-}
+};
 
 export default PatientCard;

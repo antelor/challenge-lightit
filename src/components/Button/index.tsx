@@ -1,43 +1,37 @@
-import { useState } from "react";
 import type { ButtonHTMLAttributes } from "react";
-import { getVariantStyle } from "../../utils/buttonUtils";
 import type { Variant } from "../../types/buttons";
+import { getVariantStyle } from "../../utils/buttonUtils";
+import "./styles.css";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 	variant?: Variant;
 };
 
-function Button({ variant = "secondary", style, disabled, type = "button", ...props }: Props) {
-	const [hovered, setHovered] = useState(false);
-
+function Button({
+	variant = "secondary",
+	style,
+	disabled,
+	type = "button",
+	children,
+	...props
+}: Props) {
 	const combinedStyle: React.CSSProperties = {
-		...base,
-		...getVariantStyle(variant, hovered),
+		...getVariantStyle(variant),
 		...style,
-		cursor: disabled ? "not-allowed" : "pointer",
 		opacity: disabled ? 0.5 : 1,
 	};
 
 	return (
 		<button
 			{...props}
-			style={combinedStyle}
-			disabled={disabled}
 			type={type}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
-		/>
+			disabled={disabled}
+			style={combinedStyle}
+			className="button"
+		>
+			{children}
+		</button>
 	);
 }
-
-const base: React.CSSProperties = {
-	padding: "6px 10px",
-	borderRadius: 8,
-	border: "1px solid transparent",
-	fontSize: 13,
-	fontWeight: 500,
-	cursor: "pointer",
-	transition: "all 0.15s ease",
-};
 
 export default Button;
