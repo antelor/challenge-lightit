@@ -31,7 +31,7 @@
 - Add new patients
 - Edit existing patients
 - Delete patients (with confirmation modal)
-- Expandand patient cards for more details
+- Expandable patient cards for more details
 - Form validation with error feedback on add/edit modals
 - Animated UI interactions (Framer Motion)
 - Toasts on important actions (success and error in add, delete, edit)
