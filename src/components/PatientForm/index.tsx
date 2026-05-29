@@ -30,6 +30,7 @@ function PatientForm({ register, errors }: Props) {
 					placeholder="Avatar"
 					{...register("avatar", {
 						required: "Avatar is required",
+						setValueAs: (value) => value.replace(/\s/g, ""),
 						validate: {
 							minLength: (value) =>
 								value.trim().length >= 3 || "URL is too short",
@@ -61,6 +62,7 @@ function PatientForm({ register, errors }: Props) {
 					placeholder="Website"
 					{...register("website", {
 						required: "Website is required",
+						setValueAs: (value) => value.replace(/\s/g, ""),
 						validate: {
 							minLength: (value) =>
 								value.trim().length >= 3 || "URL is too short",
