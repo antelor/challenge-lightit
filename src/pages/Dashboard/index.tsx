@@ -44,7 +44,7 @@ function Dashboard() {
 	}
 
 	function handleEditPatient(data: PatientFormData) {
-		if (!editingPatient) return;
+		if (editingPatient === null) return;
 		editPatient(editingPatient.id, data);
 		setEditingPatient(null);
 	}
@@ -62,7 +62,7 @@ function Dashboard() {
 	}
 
 	function handleDelete() {
-		if (!deleteTarget) return;
+		if (deleteTarget === null) return;
 		deletePatient(deleteTarget.id);
 		setDeleteTarget(null);
 		toast.success("Patient deleted successfully");
