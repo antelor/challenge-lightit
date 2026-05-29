@@ -17,14 +17,11 @@ function PatientForm({ register, errors }: Props) {
 						required: "Name is required",
 						validate: {
 							maxLength: (value) =>
-								value.trim().length <= 30 ||
-								"Name is too long",
+								value.trim().length <= 30 || "Name is too long",
 						},
 					})}
 				/>
-				{errors.name && (
-					<span style={error}>{errors.name.message}</span>
-				)}
+				{errors.name && <span style={error}>{errors.name.message}</span>}
 			</div>
 
 			<div style={field}>
@@ -35,17 +32,14 @@ function PatientForm({ register, errors }: Props) {
 						required: "Avatar is required",
 						validate: {
 							minLength: (value) =>
-								value.trim().length >= 3 ||
-								"URL is too short",
+								value.trim().length >= 3 || "URL is too short",
 							hasDot: (value) =>
 								value.includes(".") ||
 								"URL must contain a dot (e.g. google.com)",
 						},
 					})}
 				/>
-				{errors.avatar && (
-					<span style={error}>{errors.avatar.message}</span>
-				)}
+				{errors.avatar && <span style={error}>{errors.avatar.message}</span>}
 			</div>
 
 			<div style={field}>
@@ -69,17 +63,14 @@ function PatientForm({ register, errors }: Props) {
 						required: "Website is required",
 						validate: {
 							minLength: (value) =>
-								value.trim().length >= 3 ||
-								"URL is too short",
+								value.trim().length >= 3 || "URL is too short",
 							hasDot: (value) =>
 								value.includes(".") ||
 								"URL must contain a dot (e.g. google.com)",
 						},
 					})}
 				/>
-				{errors.website && (
-					<span style={error}>{errors.website.message}</span>
-				)}
+				{errors.website && <span style={error}>{errors.website.message}</span>}
 			</div>
 		</div>
 	);
@@ -115,6 +106,7 @@ const textarea: React.CSSProperties = {
 	borderRadius: 8,
 	resize: "vertical",
 	outline: "none",
+	minHeight: 120,
 	boxSizing: "border-box",
 };
 
