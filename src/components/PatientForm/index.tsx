@@ -113,6 +113,8 @@ const textarea: React.CSSProperties = {
 const error: React.CSSProperties = {
 	fontSize: 12,
 	color: "#ef4444",
+	display: "block",
+	marginLeft: 4,
 };
 
 export default PatientForm;
