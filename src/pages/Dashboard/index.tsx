@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import PatientsGrid from "../../components/PatientsGrid";
 import { usePagination } from "../../hooks/usePagination";
 import { usePatients } from "../../hooks/usePatients";
+import ErrorState from "../../components/ErrorState";
 
 const PAGE_SIZE = 18;
 
@@ -68,7 +69,7 @@ function Dashboard() {
 	}
 
 	if (error) {
-		return <p style={{ color: "red" }}>{error}</p>;
+		return <ErrorState message={error} />;
 	}
 
 	return (
