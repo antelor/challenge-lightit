@@ -7,7 +7,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 	variant?: Variant;
 };
 
-function Button({ variant = "secondary", style, disabled, ...props }: Props) {
+function Button({ variant = "secondary", style, disabled, type = "button", ...props }: Props) {
 	const [hovered, setHovered] = useState(false);
 
 	const combinedStyle: React.CSSProperties = {
@@ -23,6 +23,7 @@ function Button({ variant = "secondary", style, disabled, ...props }: Props) {
 			{...props}
 			style={combinedStyle}
 			disabled={disabled}
+			type={type}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 		/>
