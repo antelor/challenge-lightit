@@ -3,6 +3,7 @@ import type { Patient } from "../../types/patient";
 import PatientCard from "../PatientCard";
 import PatientCardSkeleton from "../PatientCardSkeleton";
 import EmptyState from "../EmptyState";
+import "./styles.css";
 
 type Props = {
 	loading: boolean;
@@ -29,7 +30,7 @@ function PatientsGrid({
 }: Props) {
 	if (loading) {
 		return (
-			<div style={grid}>
+			<div className="patients-grid">
 				{Array.from({ length: pageSize }).map((_, i) => (
 					<PatientCardSkeleton key={i} />
 				))}
@@ -43,7 +44,7 @@ function PatientsGrid({
 
 	return (
 		<motion.div
-			style={grid}
+			className="patients-grid"
 			key={`${page}-${patients.length}`}
 			variants={container}
 			initial="hidden"
@@ -73,13 +74,6 @@ function PatientsGrid({
 		</motion.div>
 	);
 }
-
-const grid: React.CSSProperties = {
-	display: "grid",
-	gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-	gap: 12,
-	alignItems: "start",
-};
 
 const card: React.CSSProperties = {
 	border: "1px solid #e5e7eb",
