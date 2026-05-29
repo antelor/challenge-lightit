@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Patient } from "../../types/patient";
 import Avatar from "./Avatar";
 import Button from "../Button";
+import ChevronDown from "../../assets/chevron-down.svg";
 
 type Props = {
 	patient: Patient;
@@ -26,8 +27,15 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 					</div>
 				</div>
 
-				<Button onClick={onToggle}>
-					{isOpen ? "Collapse" : "Expand"}
+				<Button onClick={onToggle} style={expandBtn}>
+					<span>{isOpen ? "Collapse" : "Expand"}</span>
+					<motion.img
+						src={ChevronDown}
+						alt=""
+						animate={{ rotate: isOpen ? 180 : 0 }}
+						transition={{ duration: 0.2 }}
+						style={{ width: 12, height: 12 }}
+					/>
 				</Button>
 			</div>
 
@@ -45,18 +53,12 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 
 							<div style={footer}>
 								<div style={meta}>
-									Created{" "}
-									{new Date(patient.createdAt).toLocaleString()}
+									Created {new Date(patient.createdAt).toLocaleString()}
 								</div>
 
 								<div style={actions}>
-									<Button onClick={() => onEdit(patient)}>
-										Edit
-									</Button>
-									<Button
-										variant="danger"
-										onClick={() => onDelete(patient.id)}
-									>
+									<Button onClick={() => onEdit(patient)}>Edit</Button>
+									<Button variant="danger" onClick={() => onDelete(patient.id)}>
 										Delete
 									</Button>
 								</div>
@@ -68,7 +70,7 @@ function PatientCard({ patient, isOpen, onToggle, onEdit, onDelete }: Props) {
 										href={patient.website}
 										target="_blank"
 										rel="noreferrer noopener"
-										style={buttonStyle}
+										style={websiteBtn}
 									>
 										Visit website
 									</a>
@@ -131,7 +133,7 @@ const actions: React.CSSProperties = {
 	gap: 6,
 };
 
-const buttonStyle: React.CSSProperties = {
+const websiteBtn: React.CSSProperties = {
 	display: "inline-flex",
 	alignItems: "center",
 	justifyContent: "center",
@@ -144,5 +146,11 @@ const buttonStyle: React.CSSProperties = {
 	color: "#111827",
 	cursor: "pointer",
 };
+
+const expandBtn: React.CSSProperties = {
+	display: "inline-flex",
+	alignItems: "center",
+	gap: 4,
+}
 
 export default PatientCard;
